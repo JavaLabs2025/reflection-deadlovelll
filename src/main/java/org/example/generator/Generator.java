@@ -43,6 +43,16 @@ public class Generator {
         if (clazz.equals(byte.class) || clazz.equals(Byte.class)) {return (byte) random.nextInt(Byte.MAX_VALUE);}
         // Если дата - генерим текущую дату
         if (clazz.equals(Date.class)) {return new Date();}
+        if (clazz.equals(List.class) || clazz.equals(ArrayList.class)) {
+            List<Object> list = new ArrayList<>();
+            int randomIndex = random.nextInt(100);
+            System.out.println(clazz.getClass().getComponentType());
+            for (int i = 0; i < randomIndex; i++) {
+                Object obj = generateValueOfType(clazz.getClass());
+                list.add(obj);
+            }
+            return list;
+        }
 
         // Обработка атомиков
         if (AtomicInteger.class.equals(clazz)) {return new AtomicInteger(random.nextInt(Integer.MAX_VALUE));}
@@ -97,6 +107,10 @@ public class Generator {
         if (clazz.isEnum()) {
             Object[] arr = clazz.getEnumConstants();
             return arr[random.nextInt(arr.length)];
+        }
+        if (clazz.isInterface()) {
+            System.out.println(clazz.getSimpleName());
+            return null;
         }
         String simpleName = clazz.getSimpleName();
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
