@@ -19,10 +19,6 @@ public class Generator {
             InstantiationException,
             IllegalAccessException
     {
-        // Интерфейсе или абстрактные классы скипаем
-        if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
-            return null;
-        }
         // Для интов генерируем рандомный инт
         if (clazz.equals(int.class) || clazz.equals(Integer.class)) {return random.nextInt(1000);}
         // Для даблов генерируем рандомный дабл
@@ -76,7 +72,7 @@ public class Generator {
         }
         // Если обьект - очередь, начинаем перебор по очередям
         if (Queue.class.isAssignableFrom(clazz)) {
-            Queue<Object> queue;
+            Queue<Object> queue = null;
             // Блокирующие очереди
             if (BlockingQueue.class.isAssignableFrom(clazz)) {
                 if (ArrayBlockingQueue.class.isAssignableFrom(clazz)) {
@@ -102,11 +98,17 @@ public class Generator {
             Object[] arr = clazz.getEnumConstants();
             return arr[random.nextInt(arr.length)];
         }
+        String simpleName = clazz.getSimpleName();
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
         Class<?>[] paramTypes = constructor.getParameterTypes();
-
         Object[] params = new Object[paramTypes.length];
         for (int i = 0; i < paramTypes.length; i++) {
+            // Если аттрибуты обьекты являются типом обьекта -
+            // ломаем цикл
+            String paramName = paramTypes[i].getSimpleName();
+            if (simpleName.equals(paramName)) {
+                return null;
+            }
             params[i] = generateValueOfType(paramTypes[i]);
         }
 
