@@ -24,6 +24,5 @@ public class AtomicGenerator {
     public Object generate(Class<?> clazz) {
         Supplier<Object> supplier = generators.get(clazz);
         return supplier.get();
-
     }
 }

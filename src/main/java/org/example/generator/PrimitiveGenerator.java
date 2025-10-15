@@ -35,7 +35,8 @@ public class PrimitiveGenerator {
         generators.put(Date.class, Date::new);
     }
 
-    public Object generate(Class<?> clazz) {
+    public Object generate(Class<?> clazz)
+    {
         Supplier<Object> supplier = generators.get(clazz);
         return supplier.get();
     }

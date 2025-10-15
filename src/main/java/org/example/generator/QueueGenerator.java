@@ -2,7 +2,6 @@ package main.java.org.example.generator;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
@@ -12,7 +11,8 @@ public class QueueGenerator {
     private final Random random = new Random();
     private final Map<Class<?>, Supplier<Object>> queueGenerator = new HashMap<>();
 
-    public QueueGenerator() {
+    public QueueGenerator()
+    {
         queueGenerator.put(ArrayBlockingQueue.class, () -> {
             Queue<Object> q = new ArrayBlockingQueue<>(10);
             fillQueue(q);
@@ -40,14 +40,16 @@ public class QueueGenerator {
         });
     }
 
-    private void fillQueue(Queue<Object> queue) {
+    private void fillQueue(Queue<Object> queue)
+    {
         int size = random.nextInt(1000) + 1;
         for (int i = 0; i < size; i++) {
             queue.add("element_" + random.nextInt(1000));
         }
     }
 
-    public Object generate(Class<?> clazz) {
+    public Object generate(Class<?> clazz)
+    {
         Supplier<Object> supplier = queueGenerator.get(clazz);
         return supplier.get();
     }
