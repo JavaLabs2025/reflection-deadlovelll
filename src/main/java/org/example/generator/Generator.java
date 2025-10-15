@@ -3,6 +3,7 @@ package org.example.generator;
 import main.java.org.example.generator.AtomicGenerator;
 import main.java.org.example.generator.PrimitiveGenerator;
 import main.java.org.example.generator.QueueGenerator;
+import main.java.org.example.generator.SequenceGenerator;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -15,6 +16,7 @@ public class Generator {
     private final PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
     private final AtomicGenerator atomicGenerator = new AtomicGenerator();
     private final QueueGenerator queueGenerator = new QueueGenerator();
+    private final SequenceGenerator sequenceGenerator = new SequenceGenerator();
 
     public Object generateValueOfType(Class<?> clazz) throws
             InvocationTargetException,
@@ -33,7 +35,7 @@ public class Generator {
         if (queueValue != null) {
             return queueValue;
         }
-        Object sequenceValue = generateSequence(clazz);
+        Object sequenceValue = sequenceGenerator.generate(clazz);
         if (sequenceValue != null) {
             return sequenceValue;
         }
@@ -50,31 +52,6 @@ public class Generator {
         }
         Object generatedType = generateType(clazz);
         return generatedType;
-    }
-
-    private Object generateSequence(Class<?> clazz) throws
-            InvocationTargetException,
-            InstantiationException,
-            IllegalAccessException
-    {
-        if (clazz.equals(List.class) || clazz.equals(ArrayList.class)) {
-            List<Object> list = new ArrayList<>();
-            int randomIndex = random.nextInt(100);
-            for (int i = 0; i < randomIndex; i++) {
-                Object obj = generateValueOfType(clazz.getClass());
-                list.add(obj);
-            }
-            return list;
-        }
-        if (clazz.isArray()) {
-            int randomIndex = random.nextInt(100);
-            Object arr = Array.newInstance(clazz.getComponentType(), randomIndex);
-            for (int i = 0; i < randomIndex; i++) {
-                Array.set(arr, i, generateValueOfType(clazz.getComponentType()));
-            }
-            return arr;
-        }
-        return null;
     }
 
     private Object generateMap(Class<?> clazz)
