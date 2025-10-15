@@ -19,7 +19,7 @@ public class GenerateExample {
             for (Field field : fields) {
                 field.setAccessible(true);
                 System.out.println(
-                        "Field " + field.getName() + " with type " + field.getType() + " " + field.get(generated)
+                        "Field " + field.getName() + " with type:" + field.getType() + " and value:" + field.get(generated)
                 );
             }
         } catch (Throwable e) {

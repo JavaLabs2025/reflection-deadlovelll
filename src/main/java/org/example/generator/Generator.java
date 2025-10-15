@@ -46,7 +46,6 @@ public class Generator {
         if (clazz.equals(List.class) || clazz.equals(ArrayList.class)) {
             List<Object> list = new ArrayList<>();
             int randomIndex = random.nextInt(100);
-            System.out.println(clazz.getClass().getComponentType());
             for (int i = 0; i < randomIndex; i++) {
                 Object obj = generateValueOfType(clazz.getClass());
                 list.add(obj);
@@ -117,7 +116,7 @@ public class Generator {
         Class<?>[] paramTypes = constructor.getParameterTypes();
         Object[] params = new Object[paramTypes.length];
         for (int i = 0; i < paramTypes.length; i++) {
-            // Если аттрибуты обьекты являются типом обьекта -
+            // Если аттрибуты обьекта являются типом обьекта -
             // ломаем цикл
             String paramName = paramTypes[i].getSimpleName();
             if (simpleName.equals(paramName)) {
