@@ -14,17 +14,12 @@ public class QueueGenerator {
     public QueueGenerator()
     {
         queueGenerator.put(ArrayBlockingQueue.class, () -> {
-            Queue<Object> q = new ArrayBlockingQueue<>(10);
+            Queue<Object> q = new ArrayBlockingQueue<>(100);
             fillQueue(q);
             return q;
         });
         queueGenerator.put(LinkedBlockingQueue.class, () -> {
-            Queue<Object> q = new LinkedBlockingQueue<>(10);
-            fillQueue(q);
-            return q;
-        });
-        queueGenerator.put(ConcurrentLinkedQueue.class, () -> {
-            Queue<Object> q = new LinkedBlockingQueue<>(10);
+            Queue<Object> q = new LinkedBlockingQueue<>(100);
             fillQueue(q);
             return q;
         });
@@ -33,16 +28,11 @@ public class QueueGenerator {
             fillQueue(q);
             return q;
         });
-        queueGenerator.put(LinkedList.class, () -> {
-            Queue<Object> q = new LinkedList<>();
-            fillQueue(q);
-            return q;
-        });
     }
 
     private void fillQueue(Queue<Object> queue)
     {
-        int size = random.nextInt(1000) + 1;
+        int size = random.nextInt(100);
         for (int i = 0; i < size; i++) {
             queue.add(new Object());
         }
