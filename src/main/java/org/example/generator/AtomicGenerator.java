@@ -1,5 +1,6 @@
 package main.java.org.example.generator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;

@@ -50,12 +50,12 @@ public class MapGenerator {
         }
     }
 
-    public Object generate(Class<?> clazz)
+    public Map<String, Object> generate(Class<?> clazz)
     {
         Supplier<Object> supplier = generators.get(clazz);
         if (supplier == null) {
             return null;
         }
-        return supplier.get();
+        return (Map<String, Object>) supplier.get();
     }
 }
