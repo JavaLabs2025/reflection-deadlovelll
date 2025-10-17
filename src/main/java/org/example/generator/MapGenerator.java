@@ -8,7 +8,8 @@ public class MapGenerator {
     private final Random random = new Random();
     private final Map<Class<?>, Supplier<Object>> generators = new HashMap<>();
 
-    public MapGenerator() {
+    public MapGenerator()
+    {
         generators.put(HashMap.class, () -> {
             HashMap<String, Object> map = new HashMap<>();
             fillMap(map);

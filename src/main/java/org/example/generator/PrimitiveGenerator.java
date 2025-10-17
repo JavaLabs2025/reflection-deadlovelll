@@ -9,7 +9,8 @@ public class PrimitiveGenerator {
     private final Random random = new Random();
     private final Map<Class<?>, Supplier<Object>> generators = new HashMap<>();
 
-    public PrimitiveGenerator() {
+    public PrimitiveGenerator()
+    {
         generators.put(int.class, () -> random.nextInt(1000));
         generators.put(Integer.class, () -> random.nextInt(1000));
         generators.put(double.class, () -> random.nextDouble());

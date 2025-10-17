@@ -13,7 +13,8 @@ public class AtomicGenerator {
     private final Random random = new Random();
     private final Map<Class<?>, Supplier<Object>> generators;
 
-    public AtomicGenerator() {
+    public AtomicGenerator()
+    {
         generators = new HashMap<>();
         generators.put(AtomicInteger.class, () -> new AtomicInteger(random.nextInt(Integer.MAX_VALUE)));
         generators.put(AtomicLong.class, () -> new AtomicLong(random.nextInt(Integer.MAX_VALUE)));
@@ -21,7 +22,8 @@ public class AtomicGenerator {
         generators.put(AtomicReference.class, () -> new AtomicReference<>(random.nextInt()));
     }
 
-    public Object generate(Class<?> clazz) {
+    public Object generate(Class<?> clazz)
+    {
         Supplier<Object> supplier = generators.get(clazz);
         if (supplier == null) {
             return null;
