@@ -44,13 +44,16 @@ public class QueueGenerator {
     {
         int size = random.nextInt(1000) + 1;
         for (int i = 0; i < size; i++) {
-            queue.add("element_" + random.nextInt(1000));
+            queue.add(new Object());
         }
     }
 
     public Object generate(Class<?> clazz)
     {
         Supplier<Object> supplier = queueGenerator.get(clazz);
-        return supplier.get();
+        if (supplier != null) {
+            return supplier.get();
+        }
+        return null;
     }
 }

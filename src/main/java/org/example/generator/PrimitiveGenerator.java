@@ -2,10 +2,7 @@ package main.java.org.example.generator;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class PrimitiveGenerator {
@@ -38,6 +35,9 @@ public class PrimitiveGenerator {
     public Object generate(Class<?> clazz)
     {
         Supplier<Object> supplier = generators.get(clazz);
-        return supplier.get();
+        if (supplier != null) {
+            return supplier.get();
+        }
+        return null;
     }
 }

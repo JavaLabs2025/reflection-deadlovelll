@@ -1,9 +1,6 @@
 package org.example.generator;
 
-import main.java.org.example.generator.AtomicGenerator;
-import main.java.org.example.generator.PrimitiveGenerator;
-import main.java.org.example.generator.QueueGenerator;
-import main.java.org.example.generator.SequenceGenerator;
+import main.java.org.example.generator.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -17,6 +14,7 @@ public class Generator {
     private final AtomicGenerator atomicGenerator = new AtomicGenerator();
     private final QueueGenerator queueGenerator = new QueueGenerator();
     private final SequenceGenerator sequenceGenerator = new SequenceGenerator();
+    private final MapGenerator mapGenerator = new MapGenerator();
 
     public Object generateValueOfType(Class<?> clazz) throws
             InvocationTargetException,
@@ -39,7 +37,7 @@ public class Generator {
         if (sequenceValue != null) {
             return sequenceValue;
         }
-        Object mapValue = generateMap(clazz);
+        Object mapValue = mapGenerator.generate(clazz);
         if (mapValue != null) {
             return mapValue;
         }
@@ -52,20 +50,6 @@ public class Generator {
         }
         Object generatedType = generateType(clazz);
         return generatedType;
-    }
-
-    private Object generateMap(Class<?> clazz)
-    {
-        if (Map.class.isAssignableFrom(clazz)) {
-            Map<Object, Object> map;
-            if (ConcurrentHashMap.class.isAssignableFrom(clazz)) {
-                map = new ConcurrentHashMap<>();
-            } else {
-                map = new HashMap<>();
-            }
-            return map;
-        }
-        return null;
     }
 
     private Object generateType(Class<?> clazz) throws
