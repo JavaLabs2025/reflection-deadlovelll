@@ -1,5 +1,9 @@
 package org.example.classes;
 
+
+import org.example.annotation.Generatable;
+
+@Generatable
 public class BinaryTreeNode {
     private Integer data;
     private BinaryTreeNode left;

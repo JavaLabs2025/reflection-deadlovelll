@@ -1,5 +1,8 @@
 package org.example.classes;
 
+import org.example.annotation.Generatable;
+
+@Generatable
 public class Rectangle implements Shape {
     private double length;
     private double width;

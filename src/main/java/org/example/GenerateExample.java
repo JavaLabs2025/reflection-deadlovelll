@@ -8,7 +8,7 @@ public class GenerateExample {
     public static void main(String[] args) {
         var gen = new Generator();
         try {
-            Object generated = gen.generateValueOfType(org.example.classes.Cart.class);
+            Object generated = gen.generateValueOfType(org.example.classes.BinaryTreeNode.class);
             if (generated == null) {
                 System.out.println("Generated object is null");
                 return;

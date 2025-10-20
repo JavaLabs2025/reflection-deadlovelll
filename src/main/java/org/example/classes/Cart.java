@@ -1,7 +1,10 @@
 package org.example.classes;
 
+import org.example.annotation.Generatable;
+
 import java.util.List;
 
+@Generatable
 public class Cart {
     private List<org.example.classes.Product> items;
 
