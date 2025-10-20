@@ -1,4 +1,4 @@
-package test.java.org.example.Generator;
+package org.example.Generator;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
