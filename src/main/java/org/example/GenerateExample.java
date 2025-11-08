@@ -8,7 +8,8 @@ public class GenerateExample {
     public static void main(String[] args) {
         var gen = new Generator();
         try {
-            Object generated = gen.generateValueOfType(org.example.classes.Triangle.class);
+            int depth = 0;
+            Object generated = gen.generateValueOfType(org.example.classes.BinaryTreeNode.class, depth);
             if (generated == null) {
                 System.out.println("Generated object is null");
                 return;

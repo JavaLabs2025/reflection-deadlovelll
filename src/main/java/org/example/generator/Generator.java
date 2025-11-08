@@ -3,7 +3,6 @@ package org.example.generator;
 import main.java.org.example.generator.*;
 import org.example.annotation.Generatable;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -17,12 +16,17 @@ public class Generator {
     private final QueueGenerator queueGenerator = new QueueGenerator();
     private final SequenceGenerator sequenceGenerator = new SequenceGenerator();
     private final MapGenerator mapGenerator = new MapGenerator();
+    private static final int MAX_DEPTH = 10;
 
-    public Object generateValueOfType(Class<?> clazz) throws
+    public Object generateValueOfType(Class<?> clazz, int depth) throws
             InvocationTargetException,
             InstantiationException,
-            IllegalAccessException
+            IllegalAccessException,
+            NoSuchMethodException
     {
+        if (depth > MAX_DEPTH) {
+            return null;
+        }
         Object primitiveValue = primitiveGenerator.generate(clazz);
         if (primitiveValue != null) {
             return primitiveValue;
@@ -50,29 +54,24 @@ public class Generator {
         if (clazz.isInterface()) {
             return null;
         }
-        Object generatedType = generateType(clazz);
+        Object generatedType = generateType(clazz, depth+1);
         return generatedType;
     }
 
-    private Object generateType(Class<?> clazz) throws
+    private Object generateType(Class<?> clazz, int depth) throws
             InvocationTargetException,
             InstantiationException,
-            IllegalAccessException
+            IllegalAccessException,
+            NoSuchMethodException
     {
-        String simpleName = clazz.getSimpleName();
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
         boolean annotation = clazz.isAnnotationPresent(Generatable.class);
         if (annotation) {
             Class<?>[] paramTypes = constructor.getParameterTypes();
             Object[] params = new Object[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {
-                String paramName = paramTypes[i].getSimpleName();
-                if (simpleName.equals(paramName)) {
-                    return null;
-                }
-                params[i] = generateValueOfType(paramTypes[i]);
+                params[i] = generateValueOfType(paramTypes[i], depth+1);
             }
-
             constructor.setAccessible(true);
             Object instance = constructor.newInstance(params);
             return instance;
