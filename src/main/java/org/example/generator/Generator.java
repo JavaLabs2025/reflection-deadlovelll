@@ -1,7 +1,9 @@
 package org.example.generator;
 
 import main.java.org.example.generator.*;
+import org.example.annotation.Generatable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -59,18 +61,23 @@ public class Generator {
     {
         String simpleName = clazz.getSimpleName();
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
-        Class<?>[] paramTypes = constructor.getParameterTypes();
-        Object[] params = new Object[paramTypes.length];
-        for (int i = 0; i < paramTypes.length; i++) {
-            String paramName = paramTypes[i].getSimpleName();
-            if (simpleName.equals(paramName)) {
-                return null;
+        boolean annotation = clazz.isAnnotationPresent(Generatable.class);
+        if (annotation) {
+            Class<?>[] paramTypes = constructor.getParameterTypes();
+            Object[] params = new Object[paramTypes.length];
+            for (int i = 0; i < paramTypes.length; i++) {
+                String paramName = paramTypes[i].getSimpleName();
+                if (simpleName.equals(paramName)) {
+                    return null;
+                }
+                params[i] = generateValueOfType(paramTypes[i]);
             }
-            params[i] = generateValueOfType(paramTypes[i]);
-        }
 
-        constructor.setAccessible(true);
-        Object instance = constructor.newInstance(params);
-        return instance;
+            constructor.setAccessible(true);
+            Object instance = constructor.newInstance(params);
+            return instance;
+        } else {
+            throw new IllegalArgumentException("Class " + clazz.getName() + " has no Generatable annotation");
+        }
     }
 }
