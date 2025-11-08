@@ -16,13 +16,15 @@ public class Generator {
     private final QueueGenerator queueGenerator = new QueueGenerator();
     private final SequenceGenerator sequenceGenerator = new SequenceGenerator();
     private final MapGenerator mapGenerator = new MapGenerator();
+    private final FromInterfaceGenerator fromInterfaceGenerator = new FromInterfaceGenerator();
     private static final int MAX_DEPTH = 10;
 
     public Object generateValueOfType(Class<?> clazz, int depth) throws
             InvocationTargetException,
             InstantiationException,
             IllegalAccessException,
-            NoSuchMethodException
+            NoSuchMethodException,
+            ClassNotFoundException
     {
         if (depth > MAX_DEPTH) {
             return null;
@@ -50,7 +52,7 @@ public class Generator {
             return arr[random.nextInt(arr.length)];
         }
         if (clazz.isInterface()) {
-            return null;
+            return fromInterfaceGenerator.generate(clazz);
         }
         Object generatedType = generateType(clazz, depth+1);
         return generatedType;
@@ -60,7 +62,8 @@ public class Generator {
             InvocationTargetException,
             InstantiationException,
             IllegalAccessException,
-            NoSuchMethodException
+            NoSuchMethodException,
+            ClassNotFoundException
     {
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
         boolean annotation = clazz.isAnnotationPresent(Generatable.class);
