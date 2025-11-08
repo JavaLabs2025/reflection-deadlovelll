@@ -39,13 +39,11 @@ public class Generator {
         if (queueValue != null) {
             return queueValue;
         }
-        Object sequenceValue = sequenceGenerator.generate(clazz);
-        if (sequenceValue != null) {
-            return sequenceValue;
+        if (Collection.class.isAssignableFrom(clazz)) {
+            return sequenceGenerator.generate(clazz);
         }
-        Object mapValue = mapGenerator.generate(clazz);
-        if (mapValue != null) {
-            return mapValue;
+        if (Map.class.isAssignableFrom(clazz)) {
+            return mapGenerator.generate(clazz);
         }
         if (clazz.isEnum()) {
             Object[] arr = clazz.getEnumConstants();
