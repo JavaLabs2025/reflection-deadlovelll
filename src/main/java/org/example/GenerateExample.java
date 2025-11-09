@@ -9,12 +9,20 @@ public class GenerateExample {
         var gen = new Generator();
         try {
             int depth = 0;
-            Object generated = gen.generateValueOfType(org.example.classes.Shape.class, depth);
+            Object generated = gen.generateValueOfType(org.example.classes.Cart.class, depth);
             if (generated == null) {
                 System.out.println("Generated object is null");
                 return;
             }
             System.out.println("Generated " + generated);
+            System.out.println("With attributes:");
+            Field[] fields = generated.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                System.out.println(
+                        "Field " + field.getName() + " with type:" + field.getType() + " and value:" + field.get(generated)
+                );
+            }
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

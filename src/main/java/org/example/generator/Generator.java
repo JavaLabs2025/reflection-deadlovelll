@@ -19,7 +19,7 @@ public class Generator {
     private final FromInterfaceGenerator fromInterfaceGenerator = new FromInterfaceGenerator();
     private static final int MAX_DEPTH = 10;
 
-    public Object generateValueOfType(Class<?> clazz, int depth) throws
+    public Object generateValueOfType(Type type, int depth) throws
             InvocationTargetException,
             InstantiationException,
             IllegalAccessException,
@@ -29,33 +29,54 @@ public class Generator {
         if (depth > MAX_DEPTH) {
             return null;
         }
-        Object primitiveValue = primitiveGenerator.generate(clazz);
-        if (primitiveValue != null) {
-            return primitiveValue;
+        if (type instanceof Class<?> clazz) {
+            Object primitiveValue = primitiveGenerator.generate(clazz);
+            if (primitiveValue != null) return primitiveValue;
+
+            Object atomicValue = atomicGenerator.generate(clazz);
+            if (atomicValue != null) return atomicValue;
+
+            Object queueValue = queueGenerator.generate(clazz);
+            if (queueValue != null) return queueValue;
+
+            if (Collection.class.isAssignableFrom(clazz)) {
+                return sequenceGenerator.generate(clazz);
+            }
+            if (Map.class.isAssignableFrom(clazz)) {
+                return mapGenerator.generate(clazz);
+            }
+            if (clazz.isEnum()) {
+                Object[] arr = clazz.getEnumConstants();
+                return arr[random.nextInt(arr.length)];
+            }
+            if (clazz.isInterface()) {
+                return fromInterfaceGenerator.generate(clazz);
+            }
+            return generateType(clazz, depth + 1);
         }
-        Object atomicValue = atomicGenerator.generate(clazz);
-        if (atomicValue != null) {
-            return atomicValue;
+
+        if (type instanceof ParameterizedType pType) {
+            Type raw = pType.getRawType();
+            if (!(raw instanceof Class<?> rawClass)) {
+                throw new IllegalArgumentException("Unsupported raw type: " + raw);
+            }
+            if (Collection.class.isAssignableFrom(rawClass)) {
+                Collection<Object> collection;
+                if (rawClass.isInterface()) {
+                    collection = new ArrayList<>();
+                } else {
+                    collection = (Collection<Object>) rawClass.getDeclaredConstructor().newInstance();
+                }
+                Type elementType = pType.getActualTypeArguments()[0];
+                for (int i = 0; i < 3; i++) {
+                    Object element = generateValueOfType(elementType, depth + 1);
+                    collection.add(element);
+                }
+                return collection;
+            }
+            return generateType((Class<?>) rawClass, depth + 1);
         }
-        Object queueValue = queueGenerator.generate(clazz);
-        if (queueValue != null) {
-            return queueValue;
-        }
-        if (Collection.class.isAssignableFrom(clazz)) {
-            return sequenceGenerator.generate(clazz);
-        }
-        if (Map.class.isAssignableFrom(clazz)) {
-            return mapGenerator.generate(clazz);
-        }
-        if (clazz.isEnum()) {
-            Object[] arr = clazz.getEnumConstants();
-            return arr[random.nextInt(arr.length)];
-        }
-        if (clazz.isInterface()) {
-            return fromInterfaceGenerator.generate(clazz);
-        }
-        Object generatedType = generateType(clazz, depth+1);
-        return generatedType;
+        throw new IllegalArgumentException("Unsupported type: " + type);
     }
 
     private Object generateType(Class<?> clazz, int depth) throws
@@ -66,18 +87,19 @@ public class Generator {
             ClassNotFoundException
     {
         Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
-        boolean annotation = clazz.isAnnotationPresent(Generatable.class);
-        if (annotation) {
-            Class<?>[] paramTypes = constructor.getParameterTypes();
-            Object[] params = new Object[paramTypes.length];
-            for (int i = 0; i < paramTypes.length; i++) {
-                params[i] = generateValueOfType(paramTypes[i], depth+1);
-            }
-            constructor.setAccessible(true);
-            Object instance = constructor.newInstance(params);
-            return instance;
-        } else {
+
+        if (!clazz.isAnnotationPresent(Generatable.class)) {
             throw new IllegalArgumentException("Class " + clazz.getName() + " has no Generatable annotation");
         }
+
+        Type[] paramTypes = constructor.getGenericParameterTypes();
+        Object[] params = new Object[paramTypes.length];
+
+        for (int i = 0; i < paramTypes.length; i++) {
+            params[i] = generateValueOfType(paramTypes[i], depth + 1);
+        }
+
+        constructor.setAccessible(true);
+        return constructor.newInstance(params);
     }
 }
